@@ -10,6 +10,12 @@ A user can type in something like:
 
 The app sends that query into an AI-powered analysis pipeline, gathers market signals, and returns a structured summary with competitor comparisons, pricing signals, sentiment, key findings, opportunities, risks, and a full briefing.
 
+## Background
+
+This project was originally done in connection with Wayfair, but I expanded it with my own direction and design choices. The base idea was market intelligence, but I added my own spin by turning it into a more polished dashboard experience with stronger structure, cleaner presentation, better fallback handling, and features that make it feel closer to a usable product.
+
+A big part of the work was not just getting an AI response, but shaping the output into something that feels practical for research, benchmarking, and strategy.
+
 ## Why I Built It
 
 I wanted to build something that felt closer to a real market intelligence tool than a basic chatbot interface. Instead of only returning text, this dashboard organizes the output into a format that is easier to scan, compare, and use for decision-making.
@@ -21,7 +27,7 @@ It is designed to feel clean, modern, and useful for product research, competito
 The dashboard allows a user to:
 
 - ask a market or product research question in natural language
-- run a live AI analysis workflow
+- run an AI analysis workflow
 - view structured market results in a dashboard layout
 - compare competitors by pricing, ratings, and market position
 - read a full AI-generated market briefing
@@ -68,13 +74,11 @@ The user can export the generated report as a JSON file.
 ### Fallback handling
 If the AI response fails to parse as valid JSON, the app still shows the returned text instead of crashing.
 
----
-
 ## How It Works
 
 1. The user enters a market research question.
-2. The app sends the query to the Anthropic Messages API.
-3. A system prompt tells the model to search for relevant market data and return a strict JSON structure.
+2. The app sends the query into an AI workflow.
+3. A system prompt tells the model to gather relevant market data and return a strict JSON structure.
 4. The app parses that response.
 5. The dashboard renders the data into sections.
 6. The user can read the results or export them as JSON.
@@ -102,121 +106,91 @@ This component creates the scrolling market signal strip.
 ### `Section`
 This is a reusable wrapper for dashboard sections like findings, benchmarking, and briefing.
 
----
+## Changes I Added
 
-## Changes Made to the Program
+This project started from a Wayfair-related market intelligence idea, but I added my own changes to make it feel much more complete and product-like.
 
-Here is a cleaner explanation of what was added or improved in this version of the app.
-
-### 1. Turned the app into a full market analysis workflow
-The app now does more than accept a prompt and show a response. It runs a more structured pipeline built around a system prompt that asks the model for specific market intelligence fields.
+### 1. Turned it into a fuller dashboard experience
+I pushed it beyond a simple prompt and response setup and gave it a clearer dashboard structure.
 
 ### 2. Added structured JSON output
-The program now expects the AI to return a predictable JSON object instead of freeform text. That makes it possible to build a true dashboard interface around the output.
+The program now expects a predictable JSON object instead of freeform text. That makes it possible to display the results in a much more organized way.
 
 ### 3. Added loading phases
-The interface now tracks whether the app is currently searching or analyzing. This improves the user experience and makes the processing feel more deliberate.
+The interface now tracks whether the app is searching or analyzing, which improves the flow and gives better user feedback.
 
 ### 4. Added a scrolling ticker
-The ticker gives the dashboard more motion and makes it feel like a live intelligence product. It also gives quick visibility into pricing and market signals.
+The ticker gives the app more movement and makes it feel more like a live intelligence product.
 
 ### 5. Added suggestion prompts
-The prebuilt suggestions improve usability and help first-time users understand what kinds of questions they can ask.
+These make the app easier to test and easier for first-time users to understand.
 
 ### 6. Added competitor benchmarking
-Instead of hiding all information inside one block of text, the app now separates competitor information into its own section with useful details for each brand.
+Instead of burying everything in one text block, competitor information is broken out into its own section.
 
 ### 7. Added findings, opportunities, and risks panels
-This makes the output more useful and easier to skim, especially for someone who wants the strategic takeaways quickly.
+This makes the output easier to skim and more useful from a strategy point of view.
 
 ### 8. Added JSON export
-Users can now download the analysis result for reuse in other workflows, reports, or future tooling.
+The export feature makes it easier to reuse the results in reports, workflows, or future tools.
 
 ### 9. Added parsing fallback logic
-If the returned response is not valid JSON, the program still displays the content instead of breaking. That makes the app much more reliable.
+If the AI response is not valid JSON, the app still shows the output instead of failing.
 
 ### 10. Improved the visual design
-The dashboard was styled to feel more premium and polished through:
+I styled the project to feel more premium and polished through:
 
 - dark theme styling
-- typography choices using Playfair Display, DM Sans, and DM Mono
-- soft borders and layered panels
-- subtle animation
+- typography using Playfair Display, DM Sans, and DM Mono
+- soft borders and layered sections
+- subtle animations
 - cleaner spacing and hierarchy
 
----
+## API and Security Note
 
-## Strengths of the Project
+There is no API key included in the frontend code shown in this version.
 
-A few things this project does well:
+That means two things:
 
-- clean and polished interface
-- strong portfolio presentation
-- useful structured output
-- clear separation of interface sections
-- natural user flow from query to insight
-- graceful fallback behavior when parsing fails
+- no secret key is exposed in the client
+- the direct API request is not production-ready as written
 
-## Current Limitations
+For a real deployment, the API call should be moved to a secure backend or serverless function. The frontend should send the query to your backend, and the backend should handle the external API call using environment variables for secret credentials.
 
-There are still a few things that should be improved.
+This is the right approach for security, maintainability, and deployment.
 
-- The API call does not currently include authentication headers, so it will not work as-is in a real deployment.
-- Sensitive API logic should not live in the frontend.
-- The JSON returned by the model may still be malformed sometimes.
-- The ticker width is estimated using text length, so it may not always scroll perfectly across devices or fonts.
-- Inline styling works for a single-file prototype, but it is harder to maintain as the project grows.
+## Docker
 
-## What I Would Improve Next
+Docker is a good fit for this project because it makes the app easier to run consistently across different machines and environments.
 
-If I continued building this, I would focus on the following:
+Using Docker, you can:
 
-### Secure the API call
-Move the API request into a backend or serverless function so the API key stays private.
+- package the frontend into a portable container
+- avoid local environment mismatch issues
+- make onboarding easier for teammates or reviewers
+- prepare the project for cleaner deployment workflows
 
-### Add source visibility
-Show the sources used in the report so the user can verify where the insights came from.
+For a project like this, Docker is especially useful if the app later grows into a full-stack version with:
 
-### Validate responses more strictly
-Use schema validation before rendering the AI output.
+- a React frontend
+- a backend or serverless API layer
+- environment-based secret management
+- deployment through a container platform
 
-### Add charts
-The dashboard would benefit from lightweight charts for:
+A simple next step would be to containerize the frontend with a `Dockerfile`, and later add `docker-compose` if you introduce a backend service.
 
-- competitor pricing
-- rating comparisons
-- sentiment trends
+### Example Dockerfile
 
-### Save past reports
-A history panel would let users compare analyses over time.
+```dockerfile
+FROM node:20-alpine
 
-### Improve responsiveness
-A mobile-friendly layout would make the dashboard more usable across screen sizes.
+WORKDIR /app
 
----
+COPY package*.json ./
+RUN npm install
 
-## Example Use Cases
+COPY . .
 
-This project can be used for:
+EXPOSE 5173
 
-- product research
-- competitor benchmarking
-- market trend analysis
-- pricing research
-- review and sentiment analysis
-- finding whitespace opportunities in a category
-
-## Tech Stack
-
-- React
-- JavaScript
-- Fetch API
-- Anthropic Messages API
-- web search tool integration
-- inline CSS
-
-## Running the Project
-
-```bash
-npm install
-npm run dev
+CMD ["npm", "run", "dev", "--", "--host"]
